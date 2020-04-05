@@ -17,9 +17,11 @@
   import * as Combat from "./combat.js";
   import * as Data from "./data";
   import PathFinding from "pathfinding";
+  import { positionsMatch } from "./utils.js";
 
   import { BATTLEMAP_HEIGHT, BATTLEMAP_WIDTH } from "./config";
   let nextPosition;
+  let currentPosition;
   let openContainer;
 
   let pathfindingGrid;
@@ -57,6 +59,15 @@
 
       if (path.length > 2) {
         mob.position = path[1];
+      } else if (positionsMatch(path[1], player.position)) {
+        console.log("path", path);
+
+        // TODO this isnt working because its inside a map
+        // do we need some sort of animation queue bullshit?
+        mob.position = path[1];
+        setTimeout(() => {
+          mob.position = path[0];
+        }, 100);
       }
 
       return mob;
@@ -67,9 +78,10 @@
 
   const nextTurn = () => {};
 
-  const handleKeyDown = e => {};
+  const handleKeyUp = e => {};
 
-  const handleKeyUp = e => {
+  const handleKeyDown = e => {
+    currentPosition = _.cloneDeep(player.position);
     nextPosition = _.cloneDeep(player.position);
     let blockMovement = false;
     let collidedProp;
@@ -101,25 +113,17 @@
 
     if (collidedProp) {
       if (collidedProp.type === "container") {
+        player.position = nextPosition;
+        setTimeout(() => {
+          player.position = currentPosition;
+        }, 100);
         addToLog(`you open up the ${collidedProp.name}`);
         blockMovement = true;
         openContainer = collidedProp;
 
-        // if we've collided with a prop, we make a new function
-        // this function allows ContainerSvelte to do whatever
-        // it wants to the prop
         updateContainer = callback => {
-          const container = callback(collidedProp);
-          // remove the old prop from the battlemap
-          // add the new one back in
-          battlemap.props.splice(
-            battlemap.props.findIndex(p => p.uuid === container.uuid),
-            1
-          );
-          battlemap.props.push(container);
-
-          // for svelte
-          openContainer = container;
+          const updatedContainer = callback(collidedProp);
+          openContainer = updatedContainer;
           battlemap = battlemap;
         };
       } else {
@@ -131,18 +135,20 @@
         }, 200);
       }
     } else {
-      collidedMob = _.cloneDeep(
-        battlemap.mobs.find(m => {
-          return (
-            m.position[0] === nextPosition[0] &&
-            m.position[1] === nextPosition[1]
-          );
-        })
-      );
+      collidedMob = battlemap.mobs.find(m => {
+        return (
+          m.position[0] === nextPosition[0] && m.position[1] === nextPosition[1]
+        );
+      });
     }
 
     if (collidedMob) {
       blockMovement = true;
+
+      player.position = nextPosition;
+      setTimeout(() => {
+        player.position = currentPosition;
+      }, 100);
 
       if (collidedMob.healthStatus === "alive") {
         setTimeout(() => {}, 1000);
@@ -162,17 +168,9 @@
         addToLog(`you begin looting the ${collidedMob.name}`);
         openContainer = collidedMob;
         updateContainer = callback => {
-          const container = callback(collidedMob);
-          // remove the old prop from the battlemap
-          // add the new one back in
-          battlemap.mobs.splice(
-            battlemap.mobs.findIndex(p => p.uuid === container.uuid),
-            1
-          );
-          battlemap.mobs.push(container);
-
-          // for svelte
-          openContainer = container;
+          const updatedContainer = callback(collidedMob);
+          console.log("aaa");
+          openContainer = updatedContainer;
           battlemap = battlemap;
         };
       }
@@ -197,16 +195,12 @@
     outline: 1px solid red;
     background-color: #222323;
   }
-  .player-tile {
-    position: absolute;
-    transition: all 0.2s;
-  }
 </style>
 
 <section>
   <div
     class="map-area"
-    style="width: {BATTLEMAP_WIDTH * 32}px; height: {BATTLEMAP_HEIGHT * 32}px">
+    style="width: {BATTLEMAP_WIDTH * 40}px; height: {BATTLEMAP_HEIGHT * 40}px">
     {#if battlemap.props}
       {#each battlemap.props as prop}
         <TileRendererSvelte tile={prop} />
@@ -225,12 +219,7 @@
       {/each}
     {/if}
 
-    <div
-      style="top: {player.position[1] * 32}px; left: {player.position[0] * 32}px"
-      class="player-tile">
-
-      <PlayerSvelte {player} />
-    </div>
+    <PlayerSvelte {player} isWorld={false} />
 
     {#if openContainer}
       <ContainerSvelte

@@ -15,6 +15,6 @@
   }
 </style>
 
-<section style="top: {mob.position[1] * 32}px; left: {mob.position[0] * 32}px">
-  <img src="./sprites/{image}.png" width="32px" height="32px" alt="" />
+<section style="top: {mob.position[1] * 40}px; left: {mob.position[0] * 40}px">
+  <img src="./sprites/{image}.png" width="40px" height="40px" alt="" />
 </section>

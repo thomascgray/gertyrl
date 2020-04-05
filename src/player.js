@@ -1,17 +1,24 @@
 export class CPlayer {
   constructor() {
+    this.maxHp = 10;
+    this.currentHp = 10;
     this.name = "Tim";
     this.race = {
-      name: "Human"
+      name: "Human",
     };
     this.profession = {
-      name: "Enchanter"
+      name: "Enchanter",
     };
     this.skills = ["skill"];
     this.xp = 0;
     this.position = [1, 1];
     this.worldPosition = [3, 3];
-    this.inventory = [];
+    this.inventory = [
+      {
+        name: "sword",
+        sprite: "sword",
+      },
+    ];
     this.quests = [];
   }
 

@@ -2,7 +2,7 @@
   import WorldMapSvelte from "./WorldMap.svelte";
   import BattlemapSvelte from "./Battlemap.svelte";
   import CharacterSetupSvelte from "./CharacterSetup.svelte";
-  import PlayerPaneSvelte from "./PlayerPlane.svelte";
+  import PlayerPaneSvelte from "./PlayerPane/PlayerPlane.svelte";
 
   import * as Data from "./data";
   import { CPlayer } from "./player";
@@ -22,7 +22,7 @@
     worldScenery = Data.getWorldScenery();
   });
 
-  let log = [];
+  let log = ["welcome to the game"];
 
   const updatePlayer = callback => {
     callback(player);
@@ -53,13 +53,14 @@
   };
 
   const addToLog = message => {
-    log = [...log, message];
+    log.unshift(message);
+    log = log;
   };
 </script>
 
 <style>
   main {
-    width: 800px;
+    width: 900px;
     margin: 0 auto;
     background: #353b48;
   }
@@ -89,8 +90,13 @@
         {updatePlayer}
         {settlements}
         {worldScenery} />
-      <PlayerPaneSvelte {player} />
+      <section class="player-wrapper">
+        {#each log as logMessage}
+          <p>{logMessage}</p>
+        {/each}
+      </section>
     </div>
+    <PlayerPaneSvelte {player} />
   {/if}
 
   {#if hasChosenCharacter && loadedBattlemapUuid}
@@ -101,18 +107,13 @@
         {player}
         {updatePlayer}
         {addToLog} />
-      <PlayerPaneSvelte {player} />
+      <section class="player-wrapper">
+        {#each log as logMessage}
+          <p>{logMessage}</p>
+        {/each}
+      </section>
     </div>
-  {/if}
-
-  {#if hasChosenCharacter}
-    <section class="player-wrapper">
-      <h3>log</h3>
-
-      {#each log as logMessage}
-        <p>{logMessage}</p>
-      {/each}
-    </section>
+    <PlayerPaneSvelte {player} />
   {/if}
 
 </main>

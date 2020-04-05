@@ -21,7 +21,6 @@
 <style>
   section {
     position: absolute;
-    position: absolute;
     transition: all 0.2s;
   }
   img {
@@ -30,12 +29,12 @@
 </style>
 
 <section
-  style="top: {tile.position[1] * 32}px; left: {tile.position[0] * 32}px">
+  style="top: {tile.position[1] * 40}px; left: {tile.position[0] * 40}px">
 
   <img
     title="a bandit cave"
     src="./sprites/{sprite}.png"
-    width="32px"
-    height="32px"
+    width="40px"
+    height="40px"
     alt="" />
 </section>

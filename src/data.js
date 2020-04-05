@@ -9,14 +9,14 @@ export const init = () => {
       name: "Liverpool",
       tile: "town",
       position: [4, 4],
-      items: []
+      items: [],
     },
     {
       uuid: "Chesterfield",
       name: "Chesterfield",
       tile: "town",
       position: [1, 10],
-      items: []
+      items: [],
     },
     {
       uuid: "Bandit Camp",
@@ -24,7 +24,7 @@ export const init = () => {
       tile: "camp",
       position: [3, 7],
       items: [],
-      battlemapUuid: "Bandit Camp"
+      battlemapUuid: "Bandit Camp",
     },
     {
       uuid: "Cave",
@@ -32,17 +32,22 @@ export const init = () => {
       tile: "cave",
       position: [7, 8],
       items: [],
-      battlemapUuid: "Cave"
-    }
+      battlemapUuid: "Cave",
+    },
   ];
 
   const worldScenery = [
     [[0, 0], "forest_1"],
     [[0, 1], "forest_2"],
+    [[0, 1], "forest_1"],
+    [[5, 7], "forest_2"],
+    [[4, 6], "forest_1"],
+    [[5, 6], "forest_2"],
+    [[0, 1], "forest_1"],
     [[7, 9], "mountain"],
     [[7, 7], "mountain"],
     [[9, 8], "mountain"],
-    [[8, 8], "mountain"]
+    [[8, 8], "mountain"],
   ];
 
   let battlemaps = [
@@ -59,19 +64,20 @@ export const init = () => {
           items: [
             {
               name: "Short Sword",
-              damage: "1d6"
-            }
+              damage: "1d6",
+              sprite: "sword",
+            },
           ],
           tile: "chest",
-          position: [1, 1]
+          position: [6, 6],
         },
         {
           uuid: "stairs up",
           name: "stairs up",
           type: "stairs_up",
           tile: "stairs_up",
-          position: [6, 3]
-        }
+          position: [6, 3],
+        },
       ],
       scenery: [
         [[0, 0], "filled_stone_1"],
@@ -105,8 +111,8 @@ export const init = () => {
         [[4, 7], "filled_stone_1"],
         [[5, 7], "filled_stone_1"],
         [[6, 7], "filled_stone_1"],
-        [[7, 7], "filled_stone_1"]
-      ]
+        [[7, 7], "filled_stone_1"],
+      ],
     },
     {
       uuid: "Bandit Camp",
@@ -118,37 +124,32 @@ export const init = () => {
           name: "signpost",
           type: "stairs_up",
           tile: "signpost",
-          position: [6, 3]
-        }
+          position: [6, 3],
+        },
       ],
       mobs: [
-        // {
-        //   uuid: "bandit1",
-        //   name: "a bandit",
-        //   type: "man_2",
-        //   hp: 12,
-        //   healthStatus: "alive",
-        //   items: [{ name: "sword" }, { name: "shield" }],
-        //   position: [7, 6]
-        // },
         {
           uuid: "bandit2",
           name: "a bandit",
           type: "man_2",
           hp: 5,
           healthStatus: "alive",
-          items: [{ name: "Sword" }, { name: "Shield" }, { name: "Egg" }],
-          position: [1, 5]
-        }
-      ]
-    }
+          items: [
+            { name: "Sword", sprite: "sword" },
+            { name: "Shield", sprite: "shield" },
+            { name: "Egg" },
+          ],
+          position: [1, 5],
+        },
+      ],
+    },
   ];
 
   // generate the collision grids for the battlemaps
-  battlemaps = battlemaps.map(battlemap => {
+  battlemaps = battlemaps.map((battlemap) => {
     const positions = [
-      ...battlemap.props.map(x => x.position),
-      ...battlemap.mobs.map(x => x.position)
+      ...battlemap.props.map((x) => x.position),
+      ...battlemap.mobs.map((x) => x.position),
     ];
 
     battlemap.collisionGrid = positionsToCollisionGrid(positions);
@@ -156,11 +157,11 @@ export const init = () => {
     return battlemap;
   });
 
-  settlements.forEach(set => {
+  settlements.forEach((set) => {
     localStorage.setItem(`settlement_${set.uuid}`, JSON.stringify(set));
   });
 
-  battlemaps.forEach(battlemap => {
+  battlemaps.forEach((battlemap) => {
     localStorage.setItem(
       `battlemap_${battlemap.uuid}`,
       JSON.stringify(battlemap)
@@ -173,17 +174,20 @@ export const init = () => {
 };
 
 export const getSettlements = () => {
+  console.log("LOCAL STORAGE ACCESS getSettlements()");
+
   const localStorageKeys = Object.keys(localStorage);
 
   const values = localStorageKeys
-    .filter(lsk => lsk.startsWith("settlement_"))
-    .map(lsk => JSON.parse(localStorage.getItem(lsk)));
+    .filter((lsk) => lsk.startsWith("settlement_"))
+    .map((lsk) => JSON.parse(localStorage.getItem(lsk)));
   return values;
 };
 
 export const updateSettlement = (settlementUuid, callback) => {
   const settlement = fetchSettlement(settlementUuid);
   const newSettlement = callback(_.cloneDeep(settlement));
+  console.log("LOCAL STORAGE ACCESS updateSettlement()");
 
   localStorage.setItem(
     `settlement_${settlementUuid}`,
@@ -193,11 +197,15 @@ export const updateSettlement = (settlementUuid, callback) => {
   return newSettlement;
 };
 
-export const fetchSettlement = settlementUuid => {
+export const fetchSettlement = (settlementUuid) => {
+  console.log("LOCAL STORAGE ACCESS fetchSettlement()");
+
   return JSON.parse(localStorage.getItem(`settlement_${settlementUuid}`));
 };
 
 export const updateBattlemap = (battlemapUuid, callback) => {
+  console.log("LOCAL STORAGE ACCESS updateBattlemap()");
+
   const battlemap = loadBattlemap(battlemapUuid);
   const newBattlemap = callback(_.cloneDeep(battlemap));
 
@@ -209,22 +217,27 @@ export const updateBattlemap = (battlemapUuid, callback) => {
   return newBattlemap;
 };
 
-export const saveBattlemap = battlemap => {
+export const saveBattlemap = (battlemap) => {
+  console.log("LOCAL STORAGE ACCESS saveBattlemap()");
+
   localStorage.setItem(
     `battlemap_${battlemap.uuid}`,
     JSON.stringify(battlemap)
   );
 };
 
-export const loadBattlemap = battlemapUuid => {
+export const loadBattlemap = (battlemapUuid) => {
+  console.log("LOCAL STORAGE ACCESS loadBattlemap()");
+
   return JSON.parse(localStorage.getItem(`battlemap_${battlemapUuid}`));
 };
 
 export const getWorldScenery = () => {
   const localStorageKeys = Object.keys(localStorage);
+  console.log("LOCAL STORAGE ACCESS getWorldScenery()");
 
   const values = localStorageKeys
-    .filter(lsk => lsk.startsWith("worldScenery_"))
-    .map(lsk => JSON.parse(localStorage.getItem(lsk)));
+    .filter((lsk) => lsk.startsWith("worldScenery_"))
+    .map((lsk) => JSON.parse(localStorage.getItem(lsk)));
   return values;
 };

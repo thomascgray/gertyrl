@@ -10,7 +10,6 @@
   let baseReflexAttribute = 5;
   let baseMindAttribute = 5;
   let baseCunningAttribute = 5;
-
   let additionalMuscleAttribute = 0;
   let additionalReflexAttribute = 0;
   let additionalMindAttribute = 0;

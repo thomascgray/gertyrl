@@ -69,16 +69,12 @@
     outline: 1px solid red;
     background-color: #222323;
   }
-  .player-tile {
-    position: absolute;
-    transition: all 0.2s;
-  }
 </style>
 
-<section>
+<section class="flex">
   <div
     class="map-area"
-    style="width: {WORLDMAP_WIDTH * 32}px; height: {WORLDMAP_HEIGHT * 32}px">
+    style="width: {WORLDMAP_WIDTH * 40}px; height: {WORLDMAP_HEIGHT * 40}px">
     {#if settlements}
       {#each settlements as settlement}
         <TileRendererSvelte tile={settlement} />
@@ -91,30 +87,26 @@
       {/each}
     {/if}
 
-    <div
-      style="top: {player.worldPosition[1] * 32}px; left: {player.worldPosition[0] * 32}px"
-      class="player-tile">
-
-      <PlayerSvelte {player} />
-    </div>
-
+    <PlayerSvelte {player} isWorld={true} />
   </div>
 
-  {#if currentSettlement}
-    <h3>{currentSettlement.name}</h3>
+  <div>
+    {#if currentSettlement}
+      <h3>{currentSettlement.name}</h3>
 
-    {#if currentSettlement.battlemapUuid}
-      <ButtonSvelte
-        onClick={() => {
-          loadBattlemap(currentSettlement.battlemapUuid);
-          updatePlayer(player => {
-            player.position[0] = 3;
-            player.position[1] = 3;
-          });
-        }}>
-        Visit this settlement
-      </ButtonSvelte>
+      {#if currentSettlement.battlemapUuid}
+        <ButtonSvelte
+          onClick={() => {
+            loadBattlemap(currentSettlement.battlemapUuid);
+            updatePlayer(player => {
+              player.position[0] = 3;
+              player.position[1] = 3;
+            });
+          }}>
+          Visit this settlement
+        </ButtonSvelte>
+      {/if}
     {/if}
-  {/if}
+  </div>
 
 </section>

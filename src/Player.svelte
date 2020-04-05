@@ -1,9 +1,21 @@
+<script>
+  export let player;
+  export let isWorld = false;
+</script>
+
 <style>
+  div {
+    position: absolute;
+    transition: all 0.2s;
+  }
   img {
     image-rendering: pixelated;
   }
 </style>
 
-<div>
-  <img src="./sprites/man.png" width="32px" height="32px" alt="" />
+<div
+  style="top: {isWorld ? player.worldPosition[1] * 40 : player.position[1] * 40}px;
+  left: {isWorld ? player.worldPosition[0] * 40 : player.position[0] * 40}px"
+  class="player-tile">
+  <img src="./sprites/man.png" width="40px" height="40px" alt="" />
 </div>

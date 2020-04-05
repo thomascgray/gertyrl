@@ -7,9 +7,13 @@ export const positionsToCollisionGrid = (positions = []) => {
     .fill(0)
     .map(() => new Array(BATTLEMAP_HEIGHT).fill(0));
 
-  positions.forEach(p => {
+  positions.forEach((p) => {
     grid[p[1]][p[0]] = 1;
   });
 
   return grid;
+};
+
+export const positionsMatch = (position1, position2) => {
+  return position1[0] === position2[0] && position1[1] === position2[1];
 };
