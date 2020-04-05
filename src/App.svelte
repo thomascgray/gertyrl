@@ -3,6 +3,7 @@
   import BattlemapSvelte from "./Battlemap.svelte";
   import CharacterSetupSvelte from "./CharacterSetup.svelte";
   import PlayerPaneSvelte from "./PlayerPane/PlayerPlane.svelte";
+  import LogPaneSvelte from "./LogPane.svelte";
 
   import * as Data from "./data";
   import { CPlayer } from "./player";
@@ -64,10 +65,6 @@
     margin: 0 auto;
     background: #353b48;
   }
-
-  .player-wrapper {
-    outline: 1px solid blue;
-  }
 </style>
 
 <main class="mt-4 p-4">
@@ -83,37 +80,30 @@
   {/if}
 
   {#if hasChosenCharacter && !loadedBattlemapUuid}
+    <WorldMapSvelte
+      {loadBattlemap}
+      {player}
+      {updatePlayer}
+      {settlements}
+      {worldScenery} />
+
     <div class="flex">
-      <WorldMapSvelte
-        {loadBattlemap}
-        {player}
-        {updatePlayer}
-        {settlements}
-        {worldScenery} />
-      <section class="player-wrapper">
-        {#each log as logMessage}
-          <p>{logMessage}</p>
-        {/each}
-      </section>
+      <LogPaneSvelte {log} />
+      <PlayerPaneSvelte {player} />
     </div>
-    <PlayerPaneSvelte {player} />
   {/if}
 
   {#if hasChosenCharacter && loadedBattlemapUuid}
+    <BattlemapSvelte
+      battlemap={loadedBattleMap}
+      {unloadBattlemap}
+      {player}
+      {updatePlayer}
+      {addToLog} />
     <div class="flex">
-      <BattlemapSvelte
-        battlemap={loadedBattleMap}
-        {unloadBattlemap}
-        {player}
-        {updatePlayer}
-        {addToLog} />
-      <section class="player-wrapper">
-        {#each log as logMessage}
-          <p>{logMessage}</p>
-        {/each}
-      </section>
+      <LogPaneSvelte {log} />
+      <PlayerPaneSvelte {player} />
     </div>
-    <PlayerPaneSvelte {player} />
   {/if}
 
 </main>

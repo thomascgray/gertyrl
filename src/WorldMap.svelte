@@ -66,7 +66,6 @@
 <style>
   .map-area {
     position: relative;
-    outline: 1px solid red;
     background-color: #222323;
   }
 </style>

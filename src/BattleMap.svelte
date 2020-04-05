@@ -64,9 +64,10 @@
 
         // TODO this isnt working because its inside a map
         // do we need some sort of animation queue bullshit?
-        mob.position = path[1];
+        // mob.position = path[1];
         setTimeout(() => {
-          mob.position = path[0];
+          console.log("a");
+          // mob.position = path[0];
         }, 100);
       }
 
