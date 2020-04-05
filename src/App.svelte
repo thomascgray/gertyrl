@@ -1,6 +1,6 @@
 <script>
   import WorldMapSvelte from "./WorldMap.svelte";
-  import BattlemapSvelte from "./Battlemap.svelte";
+  import BattlemapSvelte from "./BattleMap.svelte";
   import CharacterSetupSvelte from "./CharacterSetup.svelte";
   import PlayerPaneSvelte from "./PlayerPane/PlayerPlane.svelte";
   import LogPaneSvelte from "./LogPane.svelte";
