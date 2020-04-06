@@ -8,6 +8,7 @@
 
   import { format, addDays } from "date-fns";
   import { onMount } from "svelte";
+  import { positionsMatch } from "./utils.js";
   import * as Data from "./data.js";
   import PlayerSvelte from "./Player.svelte";
   import ButtonSvelte from "./UI/Button.svelte";
@@ -17,39 +18,68 @@
 
   import _ from "lodash";
 
+  let nextPosition;
+
   let currentSettlement;
+  let currentScenery;
 
   const handleKeyUp = e => {};
 
   const handleKeyDown = e => {
+    nextPosition = _.cloneDeep(player.worldPosition);
+    let blockMovement = false;
     switch (e.key) {
       case "s":
         updatePlayer(player => {
-          player.worldPosition[1] = player.worldPosition[1] + 1;
+          nextPosition[1] = nextPosition[1] + 1;
         });
         break;
       case "w":
         updatePlayer(player => {
-          player.worldPosition[1] = player.worldPosition[1] - 1;
+          nextPosition[1] = nextPosition[1] - 1;
         });
         break;
       case "a":
         updatePlayer(player => {
-          player.worldPosition[0] = player.worldPosition[0] - 1;
+          nextPosition[0] = nextPosition[0] - 1;
         });
         break;
       case "d":
         updatePlayer(player => {
-          player.worldPosition[0] = player.worldPosition[0] + 1;
+          nextPosition[0] = nextPosition[0] + 1;
         });
+        break;
+      case "Enter":
+        if (currentSettlement) {
+          loadBattlemap(currentSettlement.battlemapUuid);
+          updatePlayer(player => {
+            player.position[0] = 3;
+            player.position[1] = 3;
+          });
+        }
         break;
     }
 
-    currentSettlement = settlements.find(
-      s =>
-        s.position[0] === player.worldPosition[0] &&
-        s.position[1] === player.worldPosition[1]
+    if (!blockMovement) {
+      player.worldPosition = nextPosition;
+    }
+    currentScenery = worldScenery.find(ws =>
+      positionsMatch(ws[0], player.worldPosition)
     );
+
+    if (!currentScenery) {
+      currentSettlement = settlements.find(s =>
+        positionsMatch(s.position, player.worldPosition)
+      );
+    }
+
+    if (currentScenery) {
+      addToLog(`you pass by a ${currentScenery[2]}`);
+    }
+
+    if (currentSettlement) {
+      addToLog(`you pass by ${currentSettlement.name}`);
+    }
   };
 
   onMount(() => {

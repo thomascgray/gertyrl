@@ -37,17 +37,17 @@ export const init = () => {
   ];
 
   const worldScenery = [
-    [[0, 0], "forest_1"],
-    [[0, 1], "forest_2"],
-    [[0, 1], "forest_1"],
-    [[5, 7], "forest_2"],
-    [[4, 6], "forest_1"],
-    [[5, 6], "forest_2"],
-    [[0, 1], "forest_1"],
-    [[7, 9], "mountain"],
-    [[7, 7], "mountain"],
-    [[9, 8], "mountain"],
-    [[8, 8], "mountain"],
+    [[0, 0], "forest_1", "forest"],
+    [[0, 1], "forest_2", "forest"],
+    [[0, 1], "forest_1", "forest"],
+    [[5, 7], "forest_2", "forest"],
+    [[4, 6], "forest_1", "forest"],
+    [[5, 6], "forest_2", "forest"],
+    [[0, 1], "forest_1", "forest"],
+    [[7, 9], "mountain", "mountain"],
+    [[7, 7], "mountain", "mountain"],
+    [[9, 8], "mountain", "mountain"],
+    [[8, 8], "mountain", "mountain"],
   ];
 
   let battlemaps = [

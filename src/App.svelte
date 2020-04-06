@@ -84,6 +84,7 @@
       {loadBattlemap}
       {player}
       {updatePlayer}
+      {addToLog}
       {settlements}
       {worldScenery} />
 
