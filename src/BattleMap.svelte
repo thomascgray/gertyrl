@@ -82,6 +82,10 @@
   const handleKeyUp = e => {};
 
   const handleKeyDown = e => {
+    if (openContainer) {
+      return;
+    }
+
     currentPosition = _.cloneDeep(player.position);
     nextPosition = _.cloneDeep(player.position);
     let blockMovement = false;

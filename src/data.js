@@ -67,6 +67,16 @@ export const init = () => {
               damage: "1d6",
               sprite: "sword",
             },
+            {
+              name: "Axe",
+              damage: "1d6",
+              sprite: "sword",
+            },
+            {
+              name: "Iron Helment",
+              damage: "1d6",
+              sprite: "sword",
+            },
           ],
           tile: "chest",
           position: [6, 6],

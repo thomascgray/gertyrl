@@ -14,40 +14,50 @@
   import ButtonSvelte from "./UI/Button.svelte";
   import TileRendererSvelte from "./TileRenderer.svelte";
   import SceneryRendererSvelte from "./SceneryRenderer.svelte";
-  import { WORLDMAP_WIDTH, WORLDMAP_HEIGHT } from "./config";
+  import { WORLDMAP_WIDTH, WORLDMAP_HEIGHT, DIRECTIONS } from "./config";
 
   import _ from "lodash";
-
-  let nextPosition;
 
   let currentSettlement;
   let currentScenery;
 
   const handleKeyUp = e => {};
+  const playerMove = direction => {
+    let nextPosition = _.cloneDeep(player.worldPosition);
+    switch (direction) {
+      case DIRECTIONS.DOWN:
+        nextPosition[1] = nextPosition[1] + 1;
+        return nextPosition;
+
+      case DIRECTIONS.UP:
+        nextPosition[1] = nextPosition[1] - 1;
+        return nextPosition;
+
+      case DIRECTIONS.LEFT:
+        nextPosition[0] = nextPosition[0] - 1;
+        return nextPosition;
+
+      case DIRECTIONS.RIGHT:
+        nextPosition[0] = nextPosition[0] + 1;
+        return nextPosition;
+    }
+  };
 
   const handleKeyDown = e => {
-    nextPosition = _.cloneDeep(player.worldPosition);
+    let nextPosition;
     let blockMovement = false;
     switch (e.key) {
       case "s":
-        updatePlayer(player => {
-          nextPosition[1] = nextPosition[1] + 1;
-        });
+        nextPosition = playerMove(DIRECTIONS.DOWN);
         break;
       case "w":
-        updatePlayer(player => {
-          nextPosition[1] = nextPosition[1] - 1;
-        });
+        nextPosition = playerMove(DIRECTIONS.UP);
         break;
       case "a":
-        updatePlayer(player => {
-          nextPosition[0] = nextPosition[0] - 1;
-        });
+        nextPosition = playerMove(DIRECTIONS.LEFT);
         break;
       case "d":
-        updatePlayer(player => {
-          nextPosition[0] = nextPosition[0] + 1;
-        });
+        nextPosition = playerMove(DIRECTIONS.RIGHT);
         break;
       case "Enter":
         if (currentSettlement) {
@@ -57,12 +67,15 @@
             player.position[1] = 3;
           });
         }
+      default:
+        return;
         break;
     }
 
     if (!blockMovement) {
       player.worldPosition = nextPosition;
     }
+
     currentScenery = worldScenery.find(ws =>
       positionsMatch(ws[0], player.worldPosition)
     );
