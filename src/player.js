@@ -20,6 +20,12 @@ export class CPlayer {
       },
     ];
     this.quests = [];
+    this.attributes = {
+      muscle: 5,
+      reflex: 5,
+      mind: 5,
+      cunning: 5,
+    };
   }
 
   addXp(amount) {

@@ -7,6 +7,8 @@
 
   let updateContainer;
 
+  import { DIRECTIONS } from "./config.js";
+  import * as Animate from "./animate.js";
   import _ from "lodash";
   import { onMount } from "svelte";
   import PlayerSvelte from "./Player.svelte";
@@ -82,28 +84,37 @@
   const handleKeyUp = e => {};
 
   const handleKeyDown = e => {
+    e.stopPropagation();
+    e.preventDefault();
+
     if (openContainer) {
       return;
     }
 
     currentPosition = _.cloneDeep(player.position);
     nextPosition = _.cloneDeep(player.position);
+
     let blockMovement = false;
     let collidedProp;
     let collidedMob;
+    let direction;
 
     switch (e.key) {
       case "s":
         nextPosition[1] = nextPosition[1] + 1;
+        direction = DIRECTIONS.DOWN;
         break;
       case "w":
         nextPosition[1] = nextPosition[1] - 1;
+        direction = DIRECTIONS.UP;
         break;
       case "a":
         nextPosition[0] = nextPosition[0] - 1;
+        direction = DIRECTIONS.LEFT;
         break;
       case "d":
         nextPosition[0] = nextPosition[0] + 1;
+        direction = DIRECTIONS.RIGHT;
         break;
       case " ":
         turnTick();
@@ -150,10 +161,7 @@
     if (collidedMob) {
       blockMovement = true;
 
-      player.position = nextPosition;
-      setTimeout(() => {
-        player.position = currentPosition;
-      }, 100);
+      Animate.playerLunge(direction);
 
       if (collidedMob.healthStatus === "alive") {
         setTimeout(() => {}, 1000);
@@ -197,8 +205,8 @@
 <style>
   .map-area {
     position: relative;
-    outline: 1px solid red;
-    background-color: #222323;
+    background-image: url("/sprites/background-dot.png");
+    background-repeat: repeat;
   }
 </style>
 
@@ -224,7 +232,9 @@
       {/each}
     {/if}
 
-    <PlayerSvelte {player} isWorld={false} />
+    {#if player}
+      <PlayerSvelte {player} isWorld={false} />
+    {/if}
 
     {#if openContainer}
       <ContainerSvelte

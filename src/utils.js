@@ -17,3 +17,15 @@ export const positionsToCollisionGrid = (positions = []) => {
 export const positionsMatch = (position1, position2) => {
   return position1[0] === position2[0] && position1[1] === position2[1];
 };
+
+export const rand = (min, max) => {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
+export const getAttributeModifier = (val) => {
+  const modifier = Math.floor((val - 5) / 2);
+
+  return `${modifier >= 0 ? "+" : ""}${modifier}`;
+};

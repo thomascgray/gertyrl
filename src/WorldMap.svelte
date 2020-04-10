@@ -11,7 +11,7 @@
   import { positionsMatch } from "./utils.js";
   import * as Data from "./data.js";
   import PlayerSvelte from "./Player.svelte";
-  import ButtonSvelte from "./UI/Button.svelte";
+  import ButtonSvelte from "./GenericUI/Button.svelte";
   import TileRendererSvelte from "./TileRenderer.svelte";
   import SceneryRendererSvelte from "./SceneryRenderer.svelte";
   import { WORLDMAP_WIDTH, WORLDMAP_HEIGHT, DIRECTIONS } from "./config";
@@ -109,7 +109,9 @@
 <style>
   .map-area {
     position: relative;
-    background-color: #222323;
+    /* background-color: #222323; */
+    background-image: url("/sprites/background-dot.png");
+    background-repeat: repeat;
   }
 </style>
 

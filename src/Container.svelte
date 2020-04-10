@@ -5,12 +5,13 @@
   export let handleCloseContainer;
 
   import { onMount } from "svelte";
-  import ButtonSvelte from "./UI/Button.svelte";
+  import ButtonSvelte from "./GenericUI/Button.svelte";
 
   let itemCursorPosition = 0;
 
   const handleKeyDown = e => {
     e.preventDefault();
+    e.stopPropagation();
 
     switch (e.key) {
       case "s":
@@ -27,13 +28,7 @@
         break;
       case "Enter":
         const item = container.items[itemCursorPosition];
-        updatePlayer(player => {
-          player.addToInventory(item);
-        });
-        updateContainer(container => {
-          container.items.splice(container.items.indexOf(item), 1);
-          return container;
-        });
+        takeItem(item);
         break;
     }
   };
@@ -45,6 +40,16 @@
       document.removeEventListener("keydown", handleKeyDown, true);
     };
   });
+
+  const takeItem = item => {
+    updatePlayer(player => {
+      player.addToInventory(item);
+    });
+    updateContainer(container => {
+      container.items.splice(container.items.indexOf(item), 1);
+      return container;
+    });
+  };
 </script>
 
 <style>
@@ -58,26 +63,22 @@
     padding: 16px;
     color: black;
   }
-  .active {
-    border: 1px solid blue;
-  }
 </style>
 
-<section>
+<section class="container-interface">
   <h3>{container.name}</h3>
 
   <ul>
     {#each container.items as item, itemIndex}
-      <li class={itemCursorPosition === itemIndex ? 'active' : ''}>
+      <li>
+        {#if itemCursorPosition === itemIndex}
+          <span class="w-5 inline-block">></span>
+        {/if}
         <ButtonSvelte
+          className="p-2 {itemCursorPosition !== itemIndex ? 'ml-6' : ''}"
           onClick={() => {
-            updatePlayer(player => {
-              player.addToInventory(item);
-            });
-            updateContainer(container => {
-              container.items.splice(container.items.indexOf(item), 1);
-              return container;
-            });
+            takeItem(item);
+            itemCursorPosition = 0;
           }}>
           <span>
             take the
@@ -89,6 +90,7 @@
   </ul>
 
   <ButtonSvelte
+    className="p-2"
     onClick={() => {
       handleCloseContainer();
     }}>

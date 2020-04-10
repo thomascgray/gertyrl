@@ -5,15 +5,22 @@
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "start": "sirv public",
-    "test": "jest"
+    "test": "jest",
+    "storybook": "start-storybook -s ./public -p 6006",
+    "build-storybook": "build-storybook"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
     "@rollup/plugin-commonjs": "^11.0.0",
     "@rollup/plugin-node-resolve": "^7.0.0",
+    "@storybook/addon-actions": "^5.3.18",
+    "@storybook/addon-links": "^5.3.18",
+    "@storybook/addons": "^5.3.18",
+    "@storybook/svelte": "^5.3.18",
     "@types/jest": "^25.1.5",
     "babel-jest": "^25.2.6",
+    "babel-loader": "^8.1.0",
     "date-fns": "^2.11.0",
     "hotkeys-js": "^3.7.4",
     "jest": "^25.2.6",
@@ -23,7 +30,8 @@
     "rollup-plugin-livereload": "^1.0.0",
     "rollup-plugin-svelte": "^5.0.3",
     "rollup-plugin-terser": "^5.1.2",
-    "svelte": "^3.0.0"
+    "svelte": "^3.20.1",
+    "svelte-loader": "^2.13.6"
   },
   "dependencies": {
     "sirv-cli": "^0.4.4"

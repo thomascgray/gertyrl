@@ -1,6 +1,6 @@
 <script>
   import { onMount } from "svelte";
-  import ButtonSvelte from "./UI/Button.svelte";
+  import ButtonSvelte from "./GenericUI/Button.svelte";
   export let confirmCharacterSetup;
 
   let selectedRace;
