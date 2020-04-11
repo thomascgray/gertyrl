@@ -1,4 +1,4 @@
-import { BATTLEMAP_WIDTH, BATTLEMAP_HEIGHT } from "./config";
+import { BATTLEMAP_WIDTH, BATTLEMAP_HEIGHT, DIRECTIONS } from "./config";
 
 export const positionsToCollisionGrid = (positions = []) => {
   let grid;
@@ -28,4 +28,19 @@ export const getAttributeModifier = (val) => {
   const modifier = Math.floor((val - 5) / 2);
 
   return `${modifier >= 0 ? "+" : ""}${modifier}`;
+};
+
+export const directionFromPositions = (fromPosition, toPosition) => {
+  if (fromPosition[0] === toPosition[0] - 1) {
+    return DIRECTIONS.RIGHT;
+  }
+  if (fromPosition[0] === toPosition[0] + 1) {
+    return DIRECTIONS.LEFT;
+  }
+  if (fromPosition[1] === toPosition[1] - 1) {
+    return DIRECTIONS.DOWN;
+  }
+  if (fromPosition[1] === toPosition[1] + 1) {
+    return DIRECTIONS.UP;
+  }
 };

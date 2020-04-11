@@ -8,6 +8,7 @@
   let updateContainer;
 
   import { DIRECTIONS } from "./config.js";
+  import { handlePropCollision } from "./battlemap_utils.js";
   import * as Animate from "./animate.js";
   import _ from "lodash";
   import { onMount } from "svelte";
@@ -18,8 +19,8 @@
   import SceneryRendererSvelte from "./SceneryRenderer.svelte";
   import * as Combat from "./combat.js";
   import * as Data from "./data";
+  import { positionsMatch, directionFromPositions } from "./utils.js";
   import PathFinding from "pathfinding";
-  import { positionsMatch } from "./utils.js";
 
   import { BATTLEMAP_HEIGHT, BATTLEMAP_WIDTH } from "./config";
   let nextPosition;
@@ -27,13 +28,16 @@
   let openContainer;
 
   let pathfindingGrid;
-  const pathfinder = new PathFinding.AStarFinder();
+  const pathfinder = new PathFinding.AStarFinder({
+    allowDiagonal: false,
+    heuristic: PathFinding.Heuristic.octile
+  });
 
   onMount(() => {
     document.addEventListener("keydown", handleKeyDown, true);
     document.addEventListener("keyup", handleKeyUp, true);
 
-    pathfindingGrid = new PathFinding.Grid(battlemap.collisionGrid);
+    pathfindingGrid = new PathFinding.Grid(BATTLEMAP_WIDTH, BATTLEMAP_HEIGHT);
 
     return () => {
       document.removeEventListener("keydown", handleKeyDown, true);
@@ -44,65 +48,48 @@
   const postPlayerTurn = () => {};
 
   const turnTick = () => {
-    // all the mobs do some movement
+    let mobIndexToAct = 0;
 
-    // for every mob, if it doesnt have a pathfinding
-    // list, make one
+    let intervalId = setInterval(() => {
+      // do stuff with mob
+      const mob = battlemap.mobs[mobIndexToAct];
 
-    battlemap.mobs = battlemap.mobs.map(mob => {
       if (mob.healthStatus !== "alive") {
         return mob;
       }
-      console.log("player.position", player.position);
       const grid = pathfindingGrid.clone();
-      const path = pathfinder.findPath(
+
+      battlemap.mobs.forEach(m =>
+        grid.setWalkableAt(m.position[0], m.position[1], false)
+      );
+
+      const newPath = pathfinder.findPath(
         mob.position[0],
         mob.position[1],
         player.position[0],
         player.position[1],
         grid
       );
-      path.shift();
+      newPath.shift();
 
-      if (!mob.path) {
-        mob.path = path;
-        return mob;
+      if (positionsMatch(player.position, newPath[0])) {
+        Animate.mobLunge(
+          mob.uuid,
+          directionFromPositions(mob.position, player.position)
+        );
+      } else {
+        mob.position = newPath[0];
       }
 
-      console.log("initial mob.path", mob.path);
+      const indexOf = battlemap.mobs.findIndex(m => m.uuid === mob.uuid);
+      battlemap.mobs[indexOf] = mob;
 
-      mob.path = mob.path.filter((p, i) => {
-        // if the position in path is the same as the position we've already got, keep it
-        if (path[i] && positionsMatch(path[i], p)) {
-          return true;
-        }
-      });
+      mobIndexToAct = mobIndexToAct + 1;
 
-      console.log("new PATH", path);
-      console.log(
-        "we reduce mob path down to just the parts that match the NEW path",
-        mob.path
-      );
-
-      path.splice(mob.path.length - 1);
-
-      console.log(
-        "so we remove from path the length of the new, shortened mob path"
-      );
-      console.log("leaving path as", path);
-
-      // console.log("path", path);
-
-      // so now mob path is what is was before UP TO the point they diverge
-
-      // so now i need to take path AFTER this divergence and merge it into mob path
-
-      // console.log("mob.path", mob.path);
-
-      return mob;
-    });
-
-    battlemap = battlemap;
+      if (mobIndexToAct >= battlemap.mobs.length) {
+        clearInterval(intervalId);
+      }
+    }, 100);
   };
 
   const nextTurn = () => {};
@@ -155,10 +142,6 @@
 
     if (collidedProp) {
       if (collidedProp.type === "container") {
-        player.position = nextPosition;
-        setTimeout(() => {
-          player.position = currentPosition;
-        }, 100);
         addToLog(`you open up the ${collidedProp.name}`);
         blockMovement = true;
         openContainer = collidedProp;
@@ -193,13 +176,9 @@
         setTimeout(() => {}, 1000);
         collidedMob = Combat.meleeHit(player, collidedMob, addToLog);
 
-        battlemap.mobs.splice(
-          battlemap.mobs.findIndex(m => m.uuid === collidedMob.uuid),
-          1
-        );
-        battlemap.mobs.push(collidedMob);
-
-        battlemap.mobs = battlemap.mobs;
+        battlemap.mobs[
+          battlemap.mobs.findIndex(m => m.uuid === collidedMob.uuid)
+        ] = collidedMob;
 
         collidedMob = collidedMob;
         battlemap = battlemap;
@@ -208,7 +187,6 @@
         openContainer = collidedMob;
         updateContainer = callback => {
           const updatedContainer = callback(collidedMob);
-          console.log("aaa");
           openContainer = updatedContainer;
           battlemap = battlemap;
         };

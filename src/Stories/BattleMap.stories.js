@@ -30,10 +30,44 @@ const propsPathfinding = {
       {
         uuid: "bandit2",
         name: "a bandit",
-        type: "man_2",
+        type: "zombie",
         healthStatus: "alive",
         position: [1, 1],
-        path: undefined,
+      },
+    ],
+  },
+  player: {
+    position: [3, 1],
+  },
+  unloadBattlemap: () => {},
+  updatePlayer: () => {},
+  addToLog: () => {},
+};
+
+export const BattlemapPathfinding = () => ({
+  Component: Battlemap,
+  props: propsPathfinding,
+});
+
+const propsPathfindingMultipleMobs = {
+  battlemap: {
+    collisionGrid: positionsToCollisionGrid([]),
+    props: [],
+    scenery: [],
+    mobs: [
+      {
+        uuid: "bandit2",
+        name: "a bandit",
+        type: "man_2",
+        healthStatus: "alive",
+        position: [5, 5],
+      },
+      {
+        uuid: "bandit24",
+        name: "a bandit",
+        type: "man_2",
+        healthStatus: "alive",
+        position: [6, 4],
       },
     ],
   },
@@ -45,7 +79,49 @@ const propsPathfinding = {
   addToLog: () => {},
 };
 
-export const BattlemapPathfindingTest = () => ({
+export const BattlemapPathfindingMultipleMobs = () => ({
   Component: Battlemap,
-  props: propsPathfinding,
+  props: propsPathfindingMultipleMobs,
+});
+
+const propsPathfindingThreeMobs = {
+  battlemap: {
+    collisionGrid: positionsToCollisionGrid([]),
+    props: [],
+    scenery: [],
+    mobs: [
+      {
+        uuid: "bandit2",
+        name: "a bandit",
+        type: "man_2",
+        healthStatus: "alive",
+        position: [5, 5],
+      },
+      {
+        uuid: "bandit24",
+        name: "a bandit",
+        type: "man_2",
+        healthStatus: "alive",
+        position: [6, 4],
+      },
+      {
+        uuid: "bandit244",
+        name: "a bandit",
+        type: "man_2",
+        healthStatus: "alive",
+        position: [3, 10],
+      },
+    ],
+  },
+  player: {
+    position: [10, 10],
+  },
+  unloadBattlemap: () => {},
+  updatePlayer: () => {},
+  addToLog: () => {},
+};
+
+export const BattlemapPathfindingThreeMobs = () => ({
+  Component: Battlemap,
+  props: propsPathfindingThreeMobs,
 });

@@ -1,20 +1,28 @@
 import { DIRECTIONS } from "./config.js";
 
+export const mobLunge = (mobUuid, direction) => {
+  const mobWrapper = document.querySelector(`[data-id=mob-${mobUuid}-div]`);
+  domElementLunge(mobWrapper, direction);
+};
+
 export const playerLunge = (direction) => {
   const playerWrapper = document.querySelector("[data-id=player-div]");
+  domElementLunge(playerWrapper, direction);
+};
 
+export const domElementLunge = (domElement, direction) => {
   switch (direction) {
     case DIRECTIONS.UP:
-      playerLungeUp(playerWrapper);
+      domElementLungeUp(domElement);
       break;
     case DIRECTIONS.DOWN:
-      playerLungeDown(playerWrapper);
+      domElementLungeDown(domElement);
       break;
     case DIRECTIONS.LEFT:
-      playerLungeLeft(playerWrapper);
+      domElementLungeLeft(domElement);
       break;
     case DIRECTIONS.RIGHT:
-      playerLungeRight(playerWrapper);
+      domElementLungeRight(domElement);
       break;
   }
 };
@@ -31,38 +39,38 @@ export const animateElement = (
   }, 100);
 };
 
-export const playerLungeUp = (playerWrapper) => {
+export const domElementLungeUp = (domElement) => {
   animateElement(
-    playerWrapper,
+    domElement,
     "top",
-    playerWrapper.style.top,
-    String(parseInt(playerWrapper.style.top) - 30) + "px"
+    domElement.style.top,
+    String(parseInt(domElement.style.top) - 30) + "px"
   );
 };
 
-export const playerLungeDown = (playerWrapper) => {
+export const domElementLungeDown = (domElement) => {
   animateElement(
-    playerWrapper,
+    domElement,
     "top",
-    playerWrapper.style.top,
-    String(parseInt(playerWrapper.style.top) + 30) + "px"
+    domElement.style.top,
+    String(parseInt(domElement.style.top) + 30) + "px"
   );
 };
 
-export const playerLungeLeft = (playerWrapper) => {
+export const domElementLungeLeft = (domElement) => {
   animateElement(
-    playerWrapper,
+    domElement,
     "left",
-    playerWrapper.style.left,
-    String(parseInt(playerWrapper.style.left) - 30) + "px"
+    domElement.style.left,
+    String(parseInt(domElement.style.left) - 30) + "px"
   );
 };
 
-export const playerLungeRight = (playerWrapper) => {
+export const domElementLungeRight = (domElement) => {
   animateElement(
-    playerWrapper,
+    domElement,
     "left",
-    playerWrapper.style.left,
-    String(parseInt(playerWrapper.style.left) + 30) + "px"
+    domElement.style.left,
+    String(parseInt(domElement.style.left) + 30) + "px"
   );
 };

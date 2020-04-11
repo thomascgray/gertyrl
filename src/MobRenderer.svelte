@@ -16,7 +16,7 @@
 </style>
 
 <div
-  data-id={mob.uuid}
+  data-id={`mob-${mob.uuid}-div`}
   style="top: {mob.position[1] * 40}px; left: {mob.position[0] * 40}px">
   <img src="./sprites/{image}.png" width="40px" height="40px" alt="" />
 </div>

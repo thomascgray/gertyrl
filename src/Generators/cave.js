@@ -30,8 +30,6 @@ export const generate = () => {
     position: [rand(1, BATTLEMAP_WIDTH - 2), rand(1, BATTLEMAP_HEIGHT - 2)],
   });
 
-  console.log("props", props);
-
   return {
     scenery,
     mobs,
