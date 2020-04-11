@@ -27,7 +27,7 @@
   let openContainer;
 
   let pathfindingGrid;
-  var pathfinder = new PathFinding.AStarFinder();
+  const pathfinder = new PathFinding.AStarFinder();
 
   onMount(() => {
     document.addEventListener("keydown", handleKeyDown, true);
@@ -46,10 +46,14 @@
   const turnTick = () => {
     // all the mobs do some movement
 
+    // for every mob, if it doesnt have a pathfinding
+    // list, make one
+
     battlemap.mobs = battlemap.mobs.map(mob => {
       if (mob.healthStatus !== "alive") {
         return mob;
       }
+      console.log("player.position", player.position);
       const grid = pathfindingGrid.clone();
       const path = pathfinder.findPath(
         mob.position[0],
@@ -58,20 +62,42 @@
         player.position[1],
         grid
       );
+      path.shift();
 
-      if (path.length > 2) {
-        mob.position = path[1];
-      } else if (positionsMatch(path[1], player.position)) {
-        console.log("path", path);
-
-        // TODO this isnt working because its inside a map
-        // do we need some sort of animation queue bullshit?
-        // mob.position = path[1];
-        setTimeout(() => {
-          console.log("a");
-          // mob.position = path[0];
-        }, 100);
+      if (!mob.path) {
+        mob.path = path;
+        return mob;
       }
+
+      console.log("initial mob.path", mob.path);
+
+      mob.path = mob.path.filter((p, i) => {
+        // if the position in path is the same as the position we've already got, keep it
+        if (path[i] && positionsMatch(path[i], p)) {
+          return true;
+        }
+      });
+
+      console.log("new PATH", path);
+      console.log(
+        "we reduce mob path down to just the parts that match the NEW path",
+        mob.path
+      );
+
+      path.splice(mob.path.length - 1);
+
+      console.log(
+        "so we remove from path the length of the new, shortened mob path"
+      );
+      console.log("leaving path as", path);
+
+      // console.log("path", path);
+
+      // so now mob path is what is was before UP TO the point they diverge
+
+      // so now i need to take path AFTER this divergence and merge it into mob path
+
+      // console.log("mob.path", mob.path);
 
       return mob;
     });
@@ -116,7 +142,7 @@
         nextPosition[0] = nextPosition[0] + 1;
         direction = DIRECTIONS.RIGHT;
         break;
-      case " ":
+      case "p":
         turnTick();
         break;
     }

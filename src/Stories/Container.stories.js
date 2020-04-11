@@ -1,6 +1,6 @@
 import { action } from "@storybook/addon-actions";
 
-import Container from "./Container.svelte";
+import Container from "../Container.svelte";
 
 const props = {
   container: {
