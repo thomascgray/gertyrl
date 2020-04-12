@@ -17,6 +17,12 @@
   let loadedBattlemapUuid;
   let loadedBattleMap;
 
+  let activeModal = undefined;
+
+  const openModal = modalToOpen => {
+    activeModal = modalToOpen;
+  };
+
   onMount(() => {
     Data.init();
 
@@ -76,6 +82,14 @@
     width: 900px;
     margin: 0 auto;
     background: #353b48;
+    position: relative;
+  }
+  .modal {
+    position: absolute;
+    top: 116px;
+    width: 440px;
+    height: 440px;
+    left: 30px;
   }
 </style>
 
@@ -92,7 +106,7 @@
   {/if}
 
   {#if hasChosenCharacter && !loadedBattlemapUuid}
-    <MenuBarSvelte {player} />
+    <MenuBarSvelte {player} {openModal} />
     <WorldMapSvelte
       {loadBattlemap}
       {player}
@@ -109,7 +123,7 @@
   {/if}
 
   {#if hasChosenCharacter && loadedBattlemapUuid}
-    <MenuBarSvelte {player} />
+    <MenuBarSvelte {player} {openModal} />
 
     <BattlemapSvelte
       battlemap={loadedBattleMap}
@@ -123,6 +137,37 @@
       <LogPaneSvelte {log} />
       <PlayerPaneSvelte {player} />
     </div>
+  {/if}
+
+  {#if activeModal === 'character'}
+    <section class="modal bg-gray-800 text-gray-100 p-2">
+      <span>character modal</span>
+      <button on:click={() => openModal(undefined)}>close</button>
+
+    </section>
+  {/if}
+
+  {#if activeModal === 'inventory'}
+    <section class="modal bg-gray-800 text-gray-100 p-2">
+      <span>inventory</span>
+      {#if player.inventory.length >= 1}
+        <ul>
+          {#each player.inventory as inventoryItem}
+            <li class="flex mb-2">
+              <img
+                class="pixelated mr-2"
+                src="./sprites/{inventoryItem.sprite}.png"
+                width="32px"
+                height="32px"
+                alt="" />
+              <span>{inventoryItem.name}</span>
+
+            </li>
+          {/each}
+        </ul>
+      {:else}No items{/if}
+      <button on:click={() => openModal(undefined)}>close</button>
+    </section>
   {/if}
 
 </main>

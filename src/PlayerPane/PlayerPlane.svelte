@@ -19,23 +19,4 @@
     {/each}
   </ul>
 
-  <p>
-    <strong>Inventory</strong>
-  </p>
-  {#if player.inventory.length >= 1}
-    <ul>
-      {#each player.inventory as inventoryItem}
-        <li class="flex mb-2">
-          <img
-            class="pixelated mr-2"
-            src="./sprites/{inventoryItem.sprite}.png"
-            width="32px"
-            height="32px"
-            alt="" />
-          <span>{inventoryItem.name}</span>
-
-        </li>
-      {/each}
-    </ul>
-  {:else}No items{/if}
 </section>

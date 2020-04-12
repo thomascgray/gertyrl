@@ -1,3 +1,7 @@
+<script>
+  export let openModal;
+</script>
+
 <style>
   img {
     image-rendering: pixelated;
@@ -6,7 +10,9 @@
 
 <section>
 
-  <button class="inline-block w-24 bg-gray-600 mr-2 mb-2 p-2 text-center">
+  <button
+    on:click={() => openModal('character')}
+    class="inline-block w-24 bg-gray-600 mr-2 mb-2 p-2 text-center">
     <img
       class="m-auto"
       src="./sprites/man_alt.png"
@@ -15,7 +21,9 @@
       alt="" />
     <span>Character</span>
   </button>
-  <button class="inline-block w-24 bg-gray-600 mr-2 mb-2 p-2 text-center">
+  <button
+    on:click={() => openModal('inventory')}
+    class="inline-block w-24 bg-gray-600 mr-2 mb-2 p-2 text-center">
     <img
       class="m-auto"
       src="./sprites/sack.png"
@@ -24,7 +32,9 @@
       alt="" />
     <span>Inventory</span>
   </button>
-  <button class="inline-block w-24 bg-gray-600 mr-2 mb-2 p-2 text-center">
+  <button
+    on:click={() => openModal('quests')}
+    class="inline-block w-24 bg-gray-600 mr-2 mb-2 p-2 text-center">
     <img
       class="m-auto"
       src="./sprites/exclamation.png"
@@ -34,7 +44,9 @@
     <span>Quests</span>
   </button>
 
-  <button class="inline-block w-24 bg-gray-600 mr-2 mb-2 p-2 text-center">
+  <button
+    on:click={() => openModal('factions')}
+    class="inline-block w-24 bg-gray-600 mr-2 mb-2 p-2 text-center">
     <img
       class="m-auto"
       src="./sprites/shield_red.png"
