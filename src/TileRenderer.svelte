@@ -31,10 +31,5 @@
 <section
   style="top: {tile.position[1] * 40}px; left: {tile.position[0] * 40}px">
 
-  <img
-    title="a bandit cave"
-    src="./sprites/{sprite}.png"
-    width="40px"
-    height="40px"
-    alt="" />
+  <img src="./sprites/{sprite}.png" width="40px" height="40px" alt="" />
 </section>

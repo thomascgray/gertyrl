@@ -9,3 +9,27 @@ export const meleeHit = (player, mob, addToLog) => {
 
   return mob;
 };
+
+export const mobHitPlayer = (
+  mob,
+  player,
+  addToLog,
+  updatePlayer,
+  onPlayerDeath
+) => {
+  updatePlayer((player) => {
+    player.currentHp = player.currentHp - 2;
+  });
+
+  addToLog(`the mob hit you for 2 damage`);
+
+  if (player.currentHp <= 0) {
+    console.log("on player detah");
+    onPlayerDeath();
+  }
+
+  return {
+    mob,
+    player,
+  };
+};

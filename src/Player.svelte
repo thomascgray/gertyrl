@@ -20,7 +20,7 @@
   class="player-tile">
   <img
     data-id="player"
-    src="./sprites/man.png"
+    src="./sprites/man_alt.png"
     width="40px"
     height="40px"
     alt="" />

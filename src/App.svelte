@@ -4,10 +4,11 @@
   import CharacterSetupSvelte from "./CharacterSetup.svelte";
   import PlayerPaneSvelte from "./PlayerPane/PlayerPlane.svelte";
   import LogPaneSvelte from "./LogPane.svelte";
+  import MenuBarSvelte from "./MenuBar.svelte";
 
   import * as Data from "./data";
   import { CPlayer } from "./player";
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
 
   let player = new CPlayer();
   let settlements;
@@ -44,6 +45,12 @@
     Data.saveBattlemap(battlemap);
   };
 
+  const travelToBattlemap = async (exitingBattlemap, enteringBattlemapId) => {
+    unloadBattlemap(exitingBattlemap);
+    await tick();
+    loadBattlemap(enteringBattlemapId);
+  };
+
   const confirmCharacterSetup = ({ name, race, profession, skills }) => {
     player.name = name;
     player.race = race;
@@ -51,6 +58,11 @@
     player.skills = skills;
     player = player;
     hasChosenCharacter = true;
+  };
+
+  const onPlayerDeath = () => {
+    alert("you have died!");
+    location.reload();
   };
 
   const addToLog = message => {
@@ -80,12 +92,14 @@
   {/if}
 
   {#if hasChosenCharacter && !loadedBattlemapUuid}
+    <MenuBarSvelte {player} />
     <WorldMapSvelte
       {loadBattlemap}
       {player}
       {updatePlayer}
       {addToLog}
       {settlements}
+      {onPlayerDeath}
       {worldScenery} />
 
     <div class="flex">
@@ -95,11 +109,15 @@
   {/if}
 
   {#if hasChosenCharacter && loadedBattlemapUuid}
+    <MenuBarSvelte {player} />
+
     <BattlemapSvelte
       battlemap={loadedBattleMap}
       {unloadBattlemap}
+      {travelToBattlemap}
       {player}
       {updatePlayer}
+      {onPlayerDeath}
       {addToLog} />
     <div class="flex">
       <LogPaneSvelte {log} />

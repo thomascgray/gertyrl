@@ -1,4 +1,4 @@
-const handlePropCollision = (prop) => {
+export const handlePropCollision = (prop) => {
   if (prop.type === "container") {
     addToLog(`you open up the ${prop.name}`);
     blockMovement = true;
@@ -20,3 +20,11 @@ const handlePropCollision = (prop) => {
 };
 
 const handleMobCollision = (mob) => {};
+
+export const isPlayerDead = (player) => {
+  if (player.currentHp <= 0) {
+    return true;
+  }
+
+  return false;
+};

@@ -1,10 +1,12 @@
 import { BATTLEMAP_WIDTH, BATTLEMAP_HEIGHT } from "../config";
 import { rand } from "../utils";
-export const generate = () => {
+
+export const generate = ({ uuid, name, description }) => {
   const scenery = [];
   const mobs = [];
   const props = [];
 
+  // build the outer walls
   for (let x = 0; x < BATTLEMAP_WIDTH; x++) {
     for (let y = 0; y < BATTLEMAP_HEIGHT; y++) {
       if (x === 0) {
@@ -31,8 +33,13 @@ export const generate = () => {
   });
 
   return {
+    uuid,
+    name,
+    description,
     scenery,
     mobs,
     props,
   };
 };
+
+export default generate;

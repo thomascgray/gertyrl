@@ -36,7 +36,7 @@ export const animateElement = (
   element.style[styleProperty] = newValue;
   setTimeout(() => {
     element.style[styleProperty] = originalValue;
-  }, 100);
+  }, 200);
 };
 
 export const domElementLungeUp = (domElement) => {
@@ -69,8 +69,8 @@ export const domElementLungeLeft = (domElement) => {
 export const domElementLungeRight = (domElement) => {
   animateElement(
     domElement,
-    "left",
-    domElement.style.left,
-    String(parseInt(domElement.style.left) + 30) + "px"
+    "transform",
+    "translateX(0px)",
+    "translateX(30px)"
   );
 };

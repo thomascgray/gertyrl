@@ -1,17 +1,18 @@
 <script>
   export let battlemap;
   export let unloadBattlemap;
+  export let travelToBattlemap;
   export let player;
   export let updatePlayer;
   export let addToLog;
+  export let onPlayerDeath;
 
   let updateContainer;
 
   import { DIRECTIONS } from "./config.js";
-  import { handlePropCollision } from "./battlemap_utils.js";
   import * as Animate from "./animate.js";
   import _ from "lodash";
-  import { onMount } from "svelte";
+  import { onMount, tick, afterUpdate } from "svelte";
   import PlayerSvelte from "./Player.svelte";
   import ContainerSvelte from "./Container.svelte";
   import MobRendererSvelte from "./MobRenderer.svelte";
@@ -21,6 +22,7 @@
   import * as Data from "./data";
   import { positionsMatch, directionFromPositions } from "./utils.js";
   import PathFinding from "pathfinding";
+  import { isPlayerDead } from "./battlemap_utils.js";
 
   import { BATTLEMAP_HEIGHT, BATTLEMAP_WIDTH } from "./config";
   let nextPosition;
@@ -28,6 +30,7 @@
   let openContainer;
 
   let pathfindingGrid;
+
   const pathfinder = new PathFinding.AStarFinder({
     allowDiagonal: false,
     heuristic: PathFinding.Heuristic.octile
@@ -47,19 +50,20 @@
 
   const postPlayerTurn = () => {};
 
-  const turnTick = () => {
-    let mobIndexToAct = 0;
+  const mobAct = (mob, player, otherMobs) => {
+    const animationQueue = [];
 
-    let intervalId = setInterval(() => {
-      // do stuff with mob
-      const mob = battlemap.mobs[mobIndexToAct];
-
+    return new Promise((resolve, reject) => {
       if (mob.healthStatus !== "alive") {
-        return mob;
+        return resolve({
+          mob,
+          animationQueue
+        });
       }
+
       const grid = pathfindingGrid.clone();
 
-      battlemap.mobs.forEach(m =>
+      otherMobs.forEach(m =>
         grid.setWalkableAt(m.position[0], m.position[1], false)
       );
 
@@ -73,30 +77,61 @@
       newPath.shift();
 
       if (positionsMatch(player.position, newPath[0])) {
-        Animate.mobLunge(
-          mob.uuid,
-          directionFromPositions(mob.position, player.position)
+        const combatOutput = Combat.mobHitPlayer(
+          mob,
+          player,
+          addToLog,
+          updatePlayer,
+          onPlayerDeath
         );
+        mob = combatOutput.mob;
+        player = combatOutput.player;
+        animationQueue.push({
+          uuid: mob.uuid,
+          direction: directionFromPositions(mob.position, player.position)
+        });
       } else {
+        console.log("mob move");
         mob.position = newPath[0];
       }
 
-      const indexOf = battlemap.mobs.findIndex(m => m.uuid === mob.uuid);
-      battlemap.mobs[indexOf] = mob;
+      return resolve({
+        mob,
+        player,
+        animationQueue
+      });
+    });
+  };
 
-      mobIndexToAct = mobIndexToAct + 1;
+  const turnTick = async () => {
+    let animationQueue = [];
 
-      if (mobIndexToAct >= battlemap.mobs.length) {
-        clearInterval(intervalId);
+    let livingMobs = battlemap.mobs.filter(m => m.healthStatus === "alive");
+
+    livingMobs.forEach(async (mob, index) => {
+      const update = await mobAct(mob, player, battlemap.mobs);
+      player = update.player;
+      if (!isPlayerDead(player)) {
+        battlemap.mobs[index] = update.mob;
+        animationQueue = [...animationQueue, ...update.animationQueue];
       }
-    }, 100);
+    });
+
+    // after the positions are done, wait for the
+    // state change, then run the animations
+    afterUpdate(() => {
+      animationQueue.forEach(aq => {
+        Animate.mobLunge(aq.uuid, aq.direction);
+      });
+      animationQueue = [];
+    });
   };
 
   const nextTurn = () => {};
 
   const handleKeyUp = e => {};
 
-  const handleKeyDown = e => {
+  const handleKeyDown = async e => {
     e.stopPropagation();
     e.preventDefault();
 
@@ -129,7 +164,7 @@
         nextPosition[0] = nextPosition[0] + 1;
         direction = DIRECTIONS.RIGHT;
         break;
-      case "p":
+      case " ":
         turnTick();
         break;
     }
@@ -157,6 +192,15 @@
       if (collidedProp && collidedProp.type === "stairs_up") {
         setTimeout(() => {
           unloadBattlemap(battlemap);
+        }, 200);
+      }
+      if (collidedProp && collidedProp.type === "door") {
+        setTimeout(async () => {
+          if (collidedProp.new_player_position) {
+            player.position = collidedProp.new_player_position;
+          }
+          travelToBattlemap(battlemap, collidedProp.travel_to);
+          await tick();
         }, 200);
       }
     } else {
@@ -197,8 +241,6 @@
       player.position = nextPosition;
       player = player;
     }
-
-    // turnTick();
   };
 
   const handleCloseContainer = () => {

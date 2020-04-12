@@ -8,7 +8,7 @@
 <style>
   div {
     position: absolute;
-    transition: all 0.2s;
+    transition: top 0.2s, left 0.2s, transform 0.2s;
   }
   img {
     image-rendering: pixelated;
