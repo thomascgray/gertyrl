@@ -9,6 +9,10 @@
   import * as Data from "./data";
   import { CPlayer } from "./player";
   import { onMount, tick } from "svelte";
+  import InventoryModalSvelte from "./ModalContent/Inventory.svelte";
+  import CharacterModalSvelte from "./ModalContent/Character.svelte";
+  import QuestsModalSvelte from "./ModalContent/Quests.svelte";
+  import FactionsModalSvelte from "./ModalContent/Factions.svelte";
 
   let player = new CPlayer();
   let settlements;
@@ -21,6 +25,10 @@
 
   const openModal = modalToOpen => {
     activeModal = modalToOpen;
+  };
+
+  const closeModal = () => {
+    activeModal = undefined;
   };
 
   onMount(() => {
@@ -84,90 +92,84 @@
     background: #353b48;
     position: relative;
   }
-  .modal {
-    position: absolute;
-    top: 116px;
-    width: 440px;
-    height: 440px;
-    left: 30px;
+  .modal-wrapper {
+    width: 480px;
+    height: 480px;
+    top: 0;
   }
 </style>
 
-<main class="mt-4 p-4">
+{#if !hasChosenCharacter}
+  <div class="text-center">
+    <h1 class="uppercase text-4xl font-bold">Kingdom Killer</h1>
+    <p class="italic text-gray-500">
+      A turn based adventure game, for ages eight to eighty.
+    </p>
+    <CharacterSetupSvelte {player} {confirmCharacterSetup} />
+  </div>
+{/if}
 
-  {#if !hasChosenCharacter}
-    <div class="text-center">
-      <h1 class="uppercase text-4xl font-bold">Kingdom Killer</h1>
-      <p class="italic text-gray-500">
-        A turn based adventure game, for ages eight to eighty.
-      </p>
-      <CharacterSetupSvelte {player} {confirmCharacterSetup} />
-    </div>
-  {/if}
+<main>
+  <MenuBarSvelte {player} {openModal} />
 
-  {#if hasChosenCharacter && !loadedBattlemapUuid}
-    <MenuBarSvelte {player} {openModal} />
-    <WorldMapSvelte
-      {loadBattlemap}
-      {player}
-      {updatePlayer}
-      {addToLog}
-      {settlements}
-      {onPlayerDeath}
-      {worldScenery} />
+  <div class="relative">
+    {#if hasChosenCharacter && !loadedBattlemapUuid}
+      <WorldMapSvelte
+        {loadBattlemap}
+        {player}
+        {updatePlayer}
+        {addToLog}
+        {settlements}
+        {onPlayerDeath}
+        {worldScenery} />
 
-    <div class="flex">
-      <LogPaneSvelte {log} />
-      <PlayerPaneSvelte {player} />
-    </div>
-  {/if}
+      <div class="flex">
+        <LogPaneSvelte {log} />
+        <PlayerPaneSvelte {player} />
+      </div>
+    {/if}
 
-  {#if hasChosenCharacter && loadedBattlemapUuid}
-    <MenuBarSvelte {player} {openModal} />
+    {#if hasChosenCharacter && loadedBattlemapUuid}
+      <BattlemapSvelte
+        battlemap={loadedBattleMap}
+        {unloadBattlemap}
+        {travelToBattlemap}
+        {player}
+        {updatePlayer}
+        {onPlayerDeath}
+        {addToLog} />
+      <div class="flex">
+        <LogPaneSvelte {log} />
+        <PlayerPaneSvelte {player} />
+      </div>
+    {/if}
 
-    <BattlemapSvelte
-      battlemap={loadedBattleMap}
-      {unloadBattlemap}
-      {travelToBattlemap}
-      {player}
-      {updatePlayer}
-      {onPlayerDeath}
-      {addToLog} />
-    <div class="flex">
-      <LogPaneSvelte {log} />
-      <PlayerPaneSvelte {player} />
-    </div>
-  {/if}
+    {#if activeModal === 'character'}
+      <div class="modal-wrapper">
+        <CharacterModalSvelte {player} {closeModal} />
+      </div>
+    {/if}
 
-  {#if activeModal === 'character'}
-    <section class="modal bg-gray-800 text-gray-100 p-2">
-      <span>character modal</span>
-      <button on:click={() => openModal(undefined)}>close</button>
+    {#if activeModal === 'inventory'}
+      <div class="modal-wrapper absolute">
+        <div class="w-full h-full p-2">
+          <InventoryModalSvelte {player} {closeModal} />
+        </div>
+      </div>
+    {/if}
 
-    </section>
-  {/if}
+    {#if activeModal === 'quests'}
+      <div class="modal-wrapper">
+        <QuestsModalSvelte {player} {closeModal} />
+      </div>
+    {/if}
 
-  {#if activeModal === 'inventory'}
-    <section class="modal bg-gray-800 text-gray-100 p-2">
-      <span>inventory</span>
-      {#if player.inventory.length >= 1}
-        <ul>
-          {#each player.inventory as inventoryItem}
-            <li class="flex mb-2">
-              <img
-                class="pixelated mr-2"
-                src="./sprites/{inventoryItem.sprite}.png"
-                width="32px"
-                height="32px"
-                alt="" />
-              <span>{inventoryItem.name}</span>
+    {#if activeModal === 'factions'}
+      <div class="modal-wrapper">
+        <FactionsModalSvelte {player} {closeModal} />
+      </div>
+    {/if}
 
-            </li>
-          {/each}
-        </ul>
-      {:else}No items{/if}
-      <button on:click={() => openModal(undefined)}>close</button>
-    </section>
-  {/if}
+  </div>
 
 </main>
